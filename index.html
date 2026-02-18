@@ -1,51 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Pokemon Team Builder</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- External CSS -->
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <title>Pokemon Team Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
+  <header class="page-header">
+    <h1>Pokémon Team Builder</h1>
+    <p class="sub">Search by Name or ID • Pick 4 moves • Add to your team</p>
+  </header>
 
-    <header class="header">
-        <h1>Pokémon Team Builder</h1>
-        <p>Search by Name or ID</p>
-    </header>
+  <main class="layout">
+    <section class="pokedex">
+      <div class="pokedex-top">
+        <div class="lens" aria-hidden="true"></div>
+        <div class="lights" aria-hidden="true">
+          <span class="light red"></span>
+          <span class="light yellow"></span>
+          <span class="light green"></span>
+        </div>
+      </div>
 
-    <main class="container">
+      <div class="pokedex-body">
+        <div class="search-area">
+          <div class="search-row">
+            <label for="pokemonInput">Name or ID</label>
+            <div class="search-controls">
+              <input type="text" id="pokemonInput" placeholder="e.g. pikachu or 25" />
+              <button id="searchBtn" type="button">Find</button>
+            </div>
+          </div>
 
-        <section class="search-section">
-            <input type="text" id="pokemonInput" placeholder="e.g. pikachu or 25">
-            <button id="searchBtn">Find</button>
-            <p id="status"></p>
-        </section>
+          <div class="search-row">
+            <label for="pokemonSelect">Quick Select (Gen 1)</label>
+            <select id="pokemonSelect">
+              <option value="">Loading Pokémon list…</option>
+            </select>
+          </div>
 
-        <section class="pokemon-display">
+          <div class="status-row">
+            <p id="status">Ready.</p>
+            <span id="cacheTag" class="cache-tag">Cache: —</span>
+          </div>
+        </div>
+
+        <div class="screen">
+          <div class="screen-inner">
             <h2 id="pokemonName">—</h2>
-            <img id="pokemonImage" src="" alt="" />
-            <audio id="pokemonCry" controls></audio>
 
-            <div class="moves">
-                <select id="move1"></select>
-                <select id="move2"></select>
-                <select id="move3"></select>
-                <select id="move4"></select>
+            <!-- Type badges -->
+            <div id="typeBadges" class="type-badges" aria-label="Pokemon types"></div>
+
+            <div class="media-center">
+              <img id="pokemonImage" src="" alt="" class="sprite" />
             </div>
 
-            <button id="addToTeamBtn">Add to Team</button>
-        </section>
+            <div class="media-center">
+              <audio id="pokemonCry" controls></audio>
+            </div>
+            <div id="cryHint" class="hint"></div>
+
+            <!-- Height / Weight + Stats -->
+            <div class="info-panel">
+              <div class="hw">
+                <div class="hw-item">
+                  <div class="hw-label">Height</div>
+                  <div id="heightValue" class="hw-value">—</div>
+                </div>
+                <div class="hw-item">
+                  <div class="hw-label">Weight</div>
+                  <div id="weightValue" class="hw-value">—</div>
+                </div>
+              </div>
+
+              <div class="stats">
+                <div class="stats-title">Base Stats</div>
+                <div id="statsGrid" class="stats-grid"></div>
+              </div>
+            </div>
+
+            <div class="moves">
+              <select id="move1" disabled></select>
+              <select id="move2" disabled></select>
+              <select id="move3" disabled></select>
+              <select id="move4" disabled></select>
+            </div>
+
+            <button id="addToTeamBtn" class="primary" type="button" disabled>
+              Add to Team
+            </button>
+
+            <p class="hint" id="movesHint">Moves loaded: —</p>
+          </div>
+        </div>
+
+        <div class="divider"></div>
 
         <section class="team-section">
+          <div class="team-header">
             <h3>Your Team</h3>
-            <div id="teamContainer"></div>
+            <button id="clearTeamBtn" class="danger" type="button">Clear</button>
+          </div>
+
+          <div id="teamContainer" class="team-grid"></div>
         </section>
+      </div>
+    </section>
+  </main>
 
-    </main>
-
-    <!-- External JS -->
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
