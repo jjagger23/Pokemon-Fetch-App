@@ -48,7 +48,6 @@ loadPokemonList151();
 
 /* =========================
    Pokédex "beep" sound
-   (Web Audio API; no external files needed)
 ========================= */
 let audioCtx = null;
 
@@ -57,24 +56,17 @@ function playPokedexBeep() {
     if (!audioCtx) {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
-
-    // some browsers start suspended until user gesture - attempt resume
-    if (audioCtx.state === "suspended") {
-      audioCtx.resume();
-    }
+    if (audioCtx.state === "suspended") audioCtx.resume();
 
     const now = audioCtx.currentTime;
 
-    // Oscillator for the beep
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
 
-    // "Pokédex-ish" short double beep
     osc.type = "square";
-    osc.frequency.setValueAtTime(880, now);         // A5
-    osc.frequency.setValueAtTime(990, now + 0.06);  // B5-ish
+    osc.frequency.setValueAtTime(880, now);
+    osc.frequency.setValueAtTime(990, now + 0.06);
 
-    // Envelope
     gain.gain.setValueAtTime(0.0001, now);
     gain.gain.exponentialRampToValueAtTime(0.18, now + 0.01);
     gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
@@ -85,26 +77,27 @@ function playPokedexBeep() {
     osc.start(now);
     osc.stop(now + 0.13);
   } catch {
-    // If blocked or unsupported, just do nothing (no errors)
+    // fail silently if blocked
   }
 }
 
-// --------------------------
-// helpers
-// --------------------------
+/* =========================
+   Helpers
+========================= */
 function setStatus(msg) { statusEl.textContent = msg; }
 function setCache(source) { cacheTag.textContent = `Cache: ${source}`; }
 function normalizeQuery(q) { return String(q || "").trim().toLowerCase(); }
 function cap(str) { return str ? str.charAt(0).toUpperCase() + str.slice(1) : str; }
+function unique(arr) { return [...new Set(arr)]; }
 
 function idFromListUrl(url) {
   const parts = url.split("/").filter(Boolean);
   return Number(parts[parts.length - 1]);
 }
 
+/* Pixel sprite (classic) */
 function chooseSprite(p) {
   return (
-    p?.sprites?.other?.["official-artwork"]?.front_default ||
     p?.sprites?.front_default ||
     p?.sprites?.front_shiny ||
     ""
@@ -115,25 +108,19 @@ function chooseCry(p) {
   return p?.cries?.latest || p?.cries?.legacy || "";
 }
 
-function unique(arr) {
-  return [...new Set(arr)];
-}
-
-// Convert decimeters -> meters, hectograms -> kg (PokeAPI units)
+// PokeAPI units: height=decimeters, weight=hectograms
 function formatHeight(dm) {
   if (typeof dm !== "number") return "—";
-  const m = dm / 10;
-  return `${m.toFixed(1)} m`;
+  return (dm / 10).toFixed(1) + " m";
 }
 function formatWeight(hg) {
   if (typeof hg !== "number") return "—";
-  const kg = hg / 10;
-  return `${kg.toFixed(1)} kg`;
+  return (hg / 10).toFixed(1) + " kg";
 }
 
-// --------------------------
-// localStorage cache helpers
-// --------------------------
+/* =========================
+   localStorage cache helpers
+========================= */
 function getLocalCache(key) {
   try {
     const raw = localStorage.getItem(CACHE_KEY_PREFIX + key);
@@ -154,9 +141,9 @@ function setLocalCache(key, data) {
   } catch {}
 }
 
-// --------------------------
-// fetch with caching
-// --------------------------
+/* =========================
+   Fetch with caching
+========================= */
 async function fetchPokemon(query) {
   const key = normalizeQuery(query);
   if (!key) throw new Error("Please enter a Pokémon name or ID.");
@@ -183,9 +170,9 @@ async function fetchPokemon(query) {
   return data;
 }
 
-// --------------------------
-// list dropdown (Gen 1)
-// --------------------------
+/* =========================
+   Gen 1 dropdown list
+========================= */
 async function loadPokemonList151() {
   const cached = getListCache();
   if (cached && Array.isArray(cached) && cached.length === 151) {
@@ -218,6 +205,7 @@ function getListCache() {
     return null;
   }
 }
+
 function setListCache(list) {
   try { localStorage.setItem(LIST_KEY, JSON.stringify(list)); } catch {}
 }
@@ -235,12 +223,12 @@ function fillPokemonSelect(list) {
 pokemonSelect.addEventListener("change", async () => {
   if (!pokemonSelect.value) return;
   input.value = pokemonSelect.value;
-  await handleSearch(true); // user-triggered via dropdown
+  await handleSearch(true);
 });
 
-// --------------------------
-// moves
-// --------------------------
+/* =========================
+   Moves
+========================= */
 function initMoveSelects() {
   moveDropdowns.forEach(sel => {
     sel.innerHTML = `<option value="">— Select a move —</option>`;
@@ -283,9 +271,9 @@ function getSelectedMoves() {
   return moveDropdowns.map(s => s.value).filter(Boolean);
 }
 
-// --------------------------
-// Type badges + stats UI
-// --------------------------
+/* =========================
+   Type badges + stats
+========================= */
 const TYPE_COLORS = {
   normal:  "#C8C8A7",
   fire:    "#F5AC78",
@@ -309,22 +297,13 @@ const TYPE_COLORS = {
 
 function setTypeBadges(typesArr) {
   typeBadges.innerHTML = "";
-
-  const types = (typesArr || [])
-    .map(t => t?.type?.name)
-    .filter(Boolean);
-
-  if (!types.length) return;
+  const types = (typesArr || []).map(t => t?.type?.name).filter(Boolean);
 
   for (const t of types) {
     const span = document.createElement("span");
     span.className = "type-badge";
     span.textContent = t;
-
-    const color = TYPE_COLORS[t];
-    if (color) span.style.background = color;
-    else span.classList.add("default");
-
+    span.style.background = TYPE_COLORS[t] || "#ddd";
     typeBadges.appendChild(span);
   }
 }
@@ -407,9 +386,9 @@ function clearPokemonDetailsUI() {
   setCache("—");
 }
 
-// --------------------------
-// display pokemon
-// --------------------------
+/* =========================
+   Display Pokémon
+========================= */
 function displayPokemon(p) {
   currentPokemon = p;
 
@@ -444,11 +423,9 @@ function displayPokemon(p) {
   populateMoves(moves);
 }
 
-// --------------------------
-// search handler
-// --------------------------
-// userInitiated = true when called from click/dropdown,
-// so the beep is allowed to play more reliably.
+/* =========================
+   Search Handler
+========================= */
 async function handleSearch(userInitiated = false) {
   initMoveSelects();
   setStatus("Loading…");
@@ -459,14 +436,9 @@ async function handleSearch(userInitiated = false) {
     displayPokemon(data);
     setStatus("Loaded successfully.");
 
-    // Play beep on successful load
-    // (only on user actions to avoid autoplay blocking)
-    if (userInitiated) {
-      playPokedexBeep();
-    } else {
-      // still attempt; if blocked, it fails silently
-      playPokedexBeep();
-    }
+    // Beep on success
+    if (userInitiated) playPokedexBeep();
+    else playPokedexBeep();
   } catch (e) {
     currentPokemon = null;
     clearPokemonDetailsUI();
@@ -476,14 +448,13 @@ async function handleSearch(userInitiated = false) {
 }
 
 searchBtn.addEventListener("click", () => handleSearch(true));
-
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter") handleSearch(true);
 });
 
-// --------------------------
-// team storage
-// --------------------------
+/* =========================
+   Team storage + render
+========================= */
 function loadTeam() {
   try {
     const raw = localStorage.getItem(TEAM_KEY);
@@ -541,9 +512,9 @@ function renderTeam() {
   });
 }
 
-// --------------------------
-// Add to Team
-// --------------------------
+/* =========================
+   Add to Team
+========================= */
 addToTeamBtn.addEventListener("click", () => {
   if (!currentPokemon) return;
 
@@ -558,8 +529,8 @@ addToTeamBtn.addEventListener("click", () => {
     return;
   }
 
-  const uniq = unique(selected);
-  if (uniq.length !== 4) {
+  const uniqMoves = unique(selected);
+  if (uniqMoves.length !== 4) {
     setStatus("Please choose 4 different moves (no duplicates).");
     return;
   }
@@ -568,7 +539,7 @@ addToTeamBtn.addEventListener("click", () => {
     id: currentPokemon.id,
     name: currentPokemon.name,
     sprite: chooseSprite(currentPokemon),
-    moves: uniq
+    moves: uniqMoves
   });
 
   saveTeam();
