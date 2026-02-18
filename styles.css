@@ -1,0 +1,65 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #b3e5fc, #ffffff);
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+}
+
+.header {
+    margin-bottom: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+}
+
+.search-section input {
+    padding: 8px;
+    width: 200px;
+}
+
+.search-section button {
+    padding: 8px 12px;
+    background-color: #ffcb05;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.pokemon-display img {
+    width: 200px;
+    margin: 15px 0;
+}
+
+.moves {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+select {
+    padding: 6px;
+}
+
+#addToTeamBtn {
+    padding: 8px 14px;
+    background-color: #2a75bb;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.team-section {
+    margin-top: 30px;
+    border-top: 2px solid #ccc;
+    padding-top: 20px;
+}
+
+.team-member {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 10px 0;
+}
