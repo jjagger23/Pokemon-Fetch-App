@@ -3,8 +3,7 @@
 A simple “Pokémon Team Builder” web app that uses `fetch()` with the **PokeAPI** to load Pokémon data dynamically. Users can search by **name or ID**, view the Pokémon’s **sprite**, play its **cry**, choose **four moves**, and add that Pokémon (with chosen moves) to a persistent **team list**.
 
 ## Live Demo
-If you’re using GitHub Pages, your link will look like:
-`https://<your-username>.github.io/<repo-name>/`
+(https://jjagger23.github.io/Pokemon-Fetch-App/)
 
 ## Features
 - Search Pokémon by **name or ID** (ex: `pikachu` or `25`)
